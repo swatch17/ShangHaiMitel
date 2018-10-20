@@ -25,7 +25,7 @@
         $phone = this;
 
     }
-    var $phone = null;
+    winodw.$phone = null;
     Micc.prototype.init = function () {
         var Action = {
             unk: '0', //Unknow
@@ -66,15 +66,20 @@
             $phone.loginExtension($phone.ext);
         });
         $('#logout').click(function () {
-            console.log('签出')
+            var payload = {
+                state: 5
+            };
+           $phone.setEmployeeState(function(data){
+               console.log('簽出：',data)
+           })
         });
         $('#login').click(function () {
             $phone.agentId = $('#agentId').val();
             $phone.ext = $('#ext').val();
             $phone.pwd = $('#pwd').val();
-            console.log('AgentID:',$phone.agentId,'Password:',$phone.pwd)
+            console.log('AgentID:', $phone.agentId, 'Password:', $phone.pwd)
             console.log($phone.agentId, $phone.pwd, $phone.ext)
-            $phone.login($phone.agentId, $phone.pwd,function (data) {
+            $phone.login($phone.agentId, $phone.pwd, function (data) {
                 console.log('登錄成功！')
                 $phone.bearToken = data.access_token;
                 data.miccServer = $phone.miccServer;
@@ -93,7 +98,7 @@
         var header = {
             "Content-Type": "application/x-www-form-urlencoded"
         }
-        
+
         var opts = {
             data: data,
             method: 'POST',
@@ -111,6 +116,7 @@
                     callback(res);
                 }
             }).then(function () {
+                $phone.setBusy();
                 $phone.changeUI('login');//登錄成功改變UI
             });
 
@@ -191,6 +197,9 @@
     };
     // 建立長連接
     Micc.prototype.connectToEmployeeHub = function (data) {
+        $phone.getConversationState(function () {
+            $phone.monitorEventChange()
+        })
         //  Get Reason list
         $phone.getEmployeeBusyReason($phone.busyReasonCodes)
         var connection = $.hubConnection(data.miccServer + '/miccsdk/', {
@@ -225,7 +234,17 @@
         $phone.ani = data.fromAddress;
         console.log(data.conversationState)
     }
+    // 獲取會話信息
+    Micc.prototype.getConversationState = function (callback) {
+        var data = null;
+        opts = {
+            data: data,
+            method: 'GET',
+            url: 'employees/me/conversations'
+        };
+        this.sendAjax(opts, callback);
 
+    }
     // 結束會話
     Micc.prototype.EmployeeConversationRemoved = function (conversationId) {
 
@@ -240,8 +259,8 @@
     // 坐席组状态
     Micc.prototype.stateProcess = function (presence) {
         console.log(presence)
-        $phone.agentState = presence.aggregate.state;
-        $phone.voiceState = presence.voice[0].state;
+        $phone.agentState = presence.aggregate.state;//座席狀態
+        $phone.voiceState = presence.voice[0].state;//分機狀態
         $phone.acdState = presence.voice[0].acdState;
     }
     // 設置小休
@@ -268,11 +287,25 @@
             console.log(data)
         })
     }
-    Micc.prototype.Alert = function (data) {
-        if(data){
-            console.log(345)
-        }
-        console.log(data)
+    // 彈屏方法可寫在此處
+    Micc.prototype.Alert = function () {
+        /** */
+    }
+    // 監聽會話改變
+    Micc.prototype.monitorEventChange = function (res) {
+        console.log(res)
+        /* var isItems = res._embedded.items;
+
+        for (var i = 0; i < isItems.length; i++) {
+            var mediaType = isItems[i].mediaType;
+            if (mediaType == 'Voice') {
+                ConversationState = isItems[i].conversationState;
+                ConversationId = isItems[i].conversationId;
+                $phone.changeUI(ConversationState);
+                console.log(ConversationState);
+                console.log(ConversationId)
+            }
+        } */
     }
     /**
      * 0 - Unknow
@@ -282,8 +315,24 @@
      * 4 - Away
      * 5 - Offline
      */
-    Micc.prototype.setAvailable = function () { }
-
+    // 設置就緒
+    Micc.prototype.setAvailable = function () {
+        var payload = {
+            state: 1
+        }
+        $phone.setEmployeeState(payload, function (data) {
+            console.log('setAvailable:', data)
+        })
+    }
+    // 設置示忙
+    Micc.prototype.setBusy = function () {
+        var payload = {
+            state: 2
+        }
+        $phone.setEmployeeState(payload, function (data) {
+            console.log('setBusy:', data)
+        })
+    };
     Micc.prototype.sendAjax = function (opts, callback) {
         var url = this.miccSdk + '/' + opts.url;
         var headers = {
@@ -329,8 +378,13 @@
     }
     // 簽入
     Micc.prototype.Loginui = function () {
-        $phone.unableBtn('answer', 'end', 'login', 'busy', 'checkOut', 'logout', 'answer')
-        $phone.enableBtn('checkIn')
+        $phone.unableBtn('answer', 'end', 'login', 'busy', 'checkOut', 'answer')
+        $phone.enableBtn('checkIn', 'logout')
+    }
+    // 就緒等待
+    Micc.prototype.idleui = function () {
+        $phone.unableBtn('answer', 'end', 'login', 'busy', 'checkOut', 'answer')
+        $phone.enableBtn('checkOut', 'logout')
     }
     Micc.prototype.enableBtn = function (id) {
         $.each(arguments, function (i, v) {
@@ -355,7 +409,7 @@
                 break;
             case 'Held'://保持
                 break;
-            case 'Available'://可用
+            case 'Available': $phone.idleui()//可用
                 break;
             case 'Busy'://示忙
                 break;
