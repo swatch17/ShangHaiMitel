@@ -1,11 +1,6 @@
-var phone = new Window.Micc();
-console.log(phone);
+var IP='http://10.154.70.90'
+// 實例化Mitel
+var phone = new Window.Micc(IP);
 
-phone.Ringingui()
-function toFix2(num) {
-    var numStr = '' + num;
-    var index = numStr.indexOf('.');
-    return numStr.substr(0, index) + numStr.substr(index, index + 2)
-}
-
-toFix2(0.889)
+// 初始化綁定事件
+phone.init()
