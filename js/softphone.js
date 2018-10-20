@@ -93,13 +93,14 @@
         var header = {
             "Content-Type": "application/x-www-form-urlencoded"
         }
-
+        
         var opts = {
             data: data,
             method: 'POST',
             url: this.miccAuth + "/token",
             headers: header
         };
+        console.log(opts);
         $.ajax(opts).done(
             function (res) {
                 console.log('登录成功！响应数据:', res);
