@@ -72,7 +72,7 @@
             $phone.agentId = $('#agentId').val();
             $phone.ext = $('#ext').val();
             $phone.pwd = $('#pwd').val();
-
+            console.log('AgentID:',$phone.agentId,'Password:',$phone.pwd)
             console.log($phone.agentId, $phone.pwd, $phone.ext)
             $phone.login($phone.agentId, $phone.pwd,function (data) {
                 console.log('登錄成功！')
