@@ -74,7 +74,8 @@
             $phone.pwd = $('#pwd').val();
 
             console.log($phone.agentId, $phone.pwd, $phone.ext)
-            $phone.login($phone.agentId, $phone.pwd, $phone.ext, function (data) {
+            $phone.login($phone.agentId, $phone.pwd,function (data) {
+                console.log('登錄成功！')
                 $phone.bearToken = data.access_token;
                 data.miccServer = $phone.miccServer;
                 $phone.connectToEmployeeHub(data)
