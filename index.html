@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mitel Demo</title>
+    <link rel="stylesheet" href="./css/phone.css">
+</head>
+
+<body>
+    <div class="contanier">
+        <div class="phone">
+            <div class="header phone clearfix">
+                <div class="header-left">
+                    <button id="answer" class="ui-btn enable">
+                        接话
+                    </button>
+                    <button id="end" class="ui-btn ">
+                        挂机
+                    </button>
+                    <button id="checkIn" class="ui-btn un" disabled="disabled">
+                        就绪
+                    </button>
+                    <button id="busy" class="ui-btn" disabled="disabled">
+                        示忙
+                    </button>
+                    <button id="checkOut" class="ui-btn" disabled="disabled">
+                        签出
+                    </button>
+                </div>
+                <div class="header-right">
+                    <input type="text" class="input" placeholder="AgentID" id="agentId">
+                    <input type="text" class="input" placeholder="Extension" id="ext">
+                    <input type="password" class="input" placeholder="Password" id="pwd">
+                    <button id="login" class="ui-btn">登录</button>
+                    <button id="logout" class="ui-btn">登出</button>
+                </div>
+            </div>
+            <div class="event-content">
+                <p class="text-center">事件信息</p>
+                <div id="eventInfo">
+                </div>
+            </div>
+         <input type="button"  id="clear" class="clear ui-btn" value="清除">
+        </div>
+    </div>
+    <div class="phone-login-box">
+        <div class="phone-box">
+            <div class="phone-header"></div>
+            <div class="phone-body"></div>
+            <div class="phone-footer"></div>
+        </div>
+    </div>
+
+    <script src="./js/jquery-1.11.2.min.js"></script>
+    <script src="./js/jquery.signalR.js"></script>
+    <script src="./js/softphone.js"></script>
+    <script src="./js/me.js"></script>
+</body>
+
+</html>

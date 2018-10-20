@@ -1,0 +1,178 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.header {
+    padding: 10px;
+}
+
+.header-left {
+    float: left;
+}
+
+.header-right {
+    float: right;
+}
+
+.phone-login-box {
+    width: 100%;
+    height: 100%;
+    border: 2px solid red;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 10001;
+    display: none;
+    filter: alpha(opacity=60);
+    background-color: #777;
+    opacity: 0.5;
+    -moz-opacity: 0.5;
+}
+
+.phone .ui-btn {
+    color: #666;
+    background-color: #EEE;
+    border-color: #EEE;
+    font-weight: 500;
+    font-size: 12px;
+    font-family: Microsoft YaHei;
+    text-decoration: none;
+    text-align: center;
+    line-height: 30px;
+    height: 30px;
+    padding: 0 20px;
+    margin: 0;
+    display: inline-block;
+    appearance: none;
+    cursor: pointer;
+    border: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition-property: all;
+    transition-property: all;
+    -webkit-transition-duration: .3s;
+    transition-duration: .3s;
+}
+
+.phone .ui-btn:focus,
+.phone .ui-btn:hover {
+    background-color: #f6f6f6;
+    text-decoration: none;
+    outline: none;
+}
+
+.phone .ui-btn:active,
+.phone .ui-btn {
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+    text-decoration: none;
+    background-color: #eeeeee;
+    border-color: #cfcfcf;
+    color: #d4d4d4;
+    -webkit-transition-duration: 0s;
+    transition-duration: 0s;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.ui-btn.unable,
+.ui-btn.is-disabled,
+.ui-btn:disabled {
+    top: 0 !important;
+    background: #EEE !important;
+    border: 1px solid #DDD !important;
+    text-shadow: 0 1px 1px white !important;
+    color: #CCC !important;
+    /* cursor: default !important; */
+    appearance: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    opacity: .8 !important;
+    cursor: not-allowed
+}
+
+.phone .enable {
+    background-color: #7B72E9;
+    /* border-color: #7B72E9; */
+    color: #FFF;
+}
+
+.phone .ui-btn:focus {
+    outline: 0;
+}
+
+.phone .enable:hover,
+.phone .enable:focus {
+    background-color: #a49ef0;
+    /* border-color: #a49ef0; */
+    color: #FFF;
+}
+
+.phone .enable:active,
+.phone .enable.active {
+    background-color: #827ae1;
+    /* border-color: #827ae1; */
+    outline: 0;
+    color: #5246e2;
+}
+
+.phone .input {
+    width: 120px;
+    padding: .1rem .5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.phone .event-content {
+    height: 300px;
+    border: 1px solid #DDD;
+    overflow-y: auto;
+    margin: 10px;
+    padding: 20px;
+}
+
+.phone .text-center {
+    text-align: center;
+}
+
+.phone .clear {
+    float: right;
+    margin: 10px;
+    color: #555;
+}
+
+.phone pre {
+    display: block;
+    padding: 4px;
+    margin: 0 0 4px;
+    font-size: 13px;
+    line-height: 20px;
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre;
+    white-space: pre-wrap;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+}
