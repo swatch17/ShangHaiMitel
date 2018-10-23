@@ -43,7 +43,7 @@
                 <div id="eventInfo">
                 </div>
             </div>
-         <input type="button"  id="clear" class="clear ui-btn" value="清除">
+            <input type="button" id="clear" class="clear ui-btn" value="清除">
         </div>
     </div>
     <div class="phone-login-box">
@@ -53,7 +53,20 @@
             <div class="phone-footer"></div>
         </div>
     </div>
+    <script>
+       /*  window.onload = function () {
+            function queryParam(name, str) {
+                var reg = new RegExp("(^|&)" + name + "=([^&|^#]*)(&|#|$)");
+                var str = str ? str : window.location.href;
+                var r = str.substr(str.indexOf("?") + 1).match(reg);
+                console.log(r)
+                return (r != null) ? decodeURIComponent(r[2]) : null;
+            }
 
+            var ani = queryParam('ANI');//主叫號碼
+            var callId = queryParam('conversationId');//會話ID(每通電話的唯一標誌)
+        } */
+    </script>
     <script src="./js/jquery-1.11.2.min.js"></script>
     <script src="./js/jquery.signalR.js"></script>
     <script src="./js/softphone.js"></script>

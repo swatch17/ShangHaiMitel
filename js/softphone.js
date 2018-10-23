@@ -18,6 +18,8 @@
         this.agentState = null; //座席狀態
         this.voiceState = null; //
         this.acdState = null; //分机状态
+        this.conversationState = null;//會話狀態
+        this.sessionArr = new Array();
 
         this.ani = null; //主叫
         this.dnis = null; //被叫
@@ -25,7 +27,7 @@
         $phone = this;
 
     }
-    winodw.$phone = null;
+    window.$phone = null;
     Micc.prototype.init = function () {
         var Action = {
             unk: '0', //Unknow
@@ -34,6 +36,7 @@
             dnd: '3', //DoNotDisturb
             away: '4', //Away,
             off: '5', //Offline
+
             answer: '1', //Accept
             hold: '5', //Hold
             recover: '6', //RemoveHold
@@ -46,8 +49,8 @@
                 conversationAction: Action.answer,
                 id: $phone.conversationId
             };
-            if ($(this).hasClass('active')) {
-                $phone.postEmployeeConversation(req);
+            if ($(this).hasClass('enable')) {
+                $phone.conversationAction(req);
             }
 
         });
@@ -56,22 +59,40 @@
                 conversationAction: 'End'
             };
 
-            if ($(this).hasClass('active')) {
+            if ($(this).hasClass('enable')) {
                 $phone.conversationAction(req);
             }
         });
 
         $('#checkIn').click(function () {
             console.log('签入');
-            $phone.loginExtension($phone.ext);
+
+            if ($(this).hasClass('enable')) {
+                $phone.loginExtension($phone.ext);
+            }
+
+        });
+        $('#busy').click(function () {
+            var payload = {
+                state: 2
+            };
+            if ($(this).hasClass('enable')) {
+                $phone.setEmployeeState(function (data) {
+                    console.log('示忙');
+                })
+            }
         });
         $('#logout').click(function () {
+
             var payload = {
                 state: 5
             };
-           $phone.setEmployeeState(function(data){
-               console.log('簽出：',data)
-           })
+            if ($(this).hasClass('enable')) {
+                $phone.setEmployeeState(function (data) {
+                    console.log('簽出：', data)
+                })
+            }
+
         });
         $('#login').click(function () {
             $phone.agentId = $('#agentId').val();
@@ -116,8 +137,9 @@
                     callback(res);
                 }
             }).then(function () {
-                $phone.setBusy();
-                $phone.changeUI('login');//登錄成功改變UI
+                // $phone.setBusy();
+                $phone.loginExtension($phone.ext);
+                $phone.changeUI('login')
             });
 
     }
@@ -182,6 +204,7 @@
             url: 'employees/me/conversations/' + $phone.conversationId
 
         };
+        console.log('===========', opts)
         this.sendAjax(opts, callback);
     };
     // 撥號
@@ -197,6 +220,12 @@
     };
     // 建立長連接
     Micc.prototype.connectToEmployeeHub = function (data) {
+        // 獲取座席狀態
+        $phone.getEmployeeState(function (data) {
+            $phone.employeeInfo(data)
+            console.log(data)
+        })
+        // 獲取電話通話狀態
         $phone.getConversationState(function () {
             $phone.monitorEventChange()
         })
@@ -232,7 +261,12 @@
         var data = conversations[0];
         $phone.conversationId = data.conversationId;
         $phone.ani = data.fromAddress;
-        console.log(data.conversationState)
+        $phone.conversationState = data.conversationState;
+        console.info('Received EmployeeConversationChange:', conversations)
+        console.log(data.conversationState);
+        console.log('AgentEvent:', conversationState)
+        // UI change Event
+        $phone.changeUI($phone.conversationState)
     }
     // 獲取會話信息
     Micc.prototype.getConversationState = function (callback) {
@@ -262,6 +296,8 @@
         $phone.agentState = presence.aggregate.state;//座席狀態
         $phone.voiceState = presence.voice[0].state;//分機狀態
         $phone.acdState = presence.voice[0].acdState;
+        $phone.changeUI($phone.agentState)
+        console.log('AgentState:', $phone.agentState)
     }
     // 設置小休
     Micc.prototype.setPresence = function (state, reasonCode, event) {
@@ -290,6 +326,19 @@
     // 彈屏方法可寫在此處
     Micc.prototype.Alert = function () {
         /** */
+        $phone.sessionArr.push($phone.conversationId);
+        var len = $phone.sessionArr.length;
+        if (len = 1 || len > 1) {
+            $phone.ani = $phone.matchNumber($phone.ani);
+            var url = 'http://10.154.91.50:8080/incident/smartit/dialog?ANI=' + $phone.ani + '&conversationId=' + $phone.conversationId
+            // test url
+            var testUrl = "http://10.154.91.50:8080/incident/smartit/dialog?ANI=15270897323" + '&conversationId=' + $phone.conversationId
+            window.open(testUrl);
+            console.log('%c' + url, 'background:#ff7680;color:#fff');
+        }
+
+        console.log(url)
+
     }
     // 監聽會話改變
     Micc.prototype.monitorEventChange = function (res) {
@@ -363,28 +412,34 @@
     }
     // 來電振鈴
     Micc.prototype.Connectionui = function () {
-        $phone.unableBtn('login', 'end', 'checkIn', 'busy', 'checkOut', 'logout', 'answer')
-        $phone.enableBtn('answer')
+        $phone.unableBtn('login', 'checkIn', 'busy', 'checkOut', 'logout', 'answer')
+        $phone.enableBtn('answer', 'end')
     }
     // 通話
     Micc.prototype.Ringingui = function () {
-        $phone.unableBtn('answer', 'login', 'checkIn', 'busy', 'checkOut', 'logout', 'answer')
-        $phone.enableBtn('end')
+        $phone.unableBtn('end', 'login', 'checkIn', 'busy', 'checkOut', 'logout', 'answer')
+        $phone.enableBtn('answer')
     }
     // 掛斷 
     Micc.prototype.Endui = function () {
         $phone.unableBtn('answer', 'end', 'checkIn', 'login', 'checkOut', 'logout', 'answer')
-        $phone.enableBtn('busy')
+        $phone.enableBtn('checkIn', 'busy')
     }
+
     // 簽入
     Micc.prototype.Loginui = function () {
         $phone.unableBtn('answer', 'end', 'login', 'busy', 'checkOut', 'answer')
         $phone.enableBtn('checkIn', 'logout')
     }
     // 就緒等待
-    Micc.prototype.idleui = function () {
-        $phone.unableBtn('answer', 'end', 'login', 'busy', 'checkOut', 'answer')
+    Micc.prototype.Idleui = function () {
+        $phone.unableBtn('answer', 'end', 'login', 'busy', 'checkIn', 'answer')
         $phone.enableBtn('checkOut', 'logout')
+    }
+    //示忙
+    Micc.prototype.Busyui = function () {
+        $phone.unableBtn('answer', 'end', 'login', 'busy', 'checkOut', 'answer')
+        $phone.enableBtn('checkIn', 'logout')
     }
     Micc.prototype.enableBtn = function (id) {
         $.each(arguments, function (i, v) {
@@ -399,7 +454,7 @@
 
     Micc.prototype.changeUI = function (eventName) {
         switch (eventName) {
-            case 'Offered': { $phone.Alert(); $phone.Ringingui(); }//来电振铃
+            case 'Offered': { $phone.Ringingui(); $phone.Alert(); }//来电振铃
                 break;
             case 'NonAcd': $phone.Connectionui();//通话
                 break;
@@ -409,14 +464,16 @@
                 break;
             case 'Held'://保持
                 break;
-            case 'Available': $phone.idleui()//可用
+            case 'Available': $phone.Idleui()//可用
                 break;
-            case 'Busy'://示忙
+            case 'Busy': $phone.Busyui();//示忙
                 break;
             case 'DoNotDisturb'://勿扰
                 break;
-            case 'Offline'://离线
+            case 'Offline': $phone.Busyui(); $phone.sessionArr.length = 0;//离线
                 break;
+            case 'Idle': break;
+            case 'Ended': $phone.Endui(); $phone.sessionArr.length = 0; break;
             case 'login': $phone.Loginui(); break;
             default:
                 break;
@@ -425,6 +482,19 @@
     Micc.prototype.showState = function (state) {
         $('#state').text(state);
         console.log(state)
+    }
+    // 去手機號規則，外地手機號呼入手機號需要去掉零
+    Micc.prototype.matchNumber = function (n) {
+        var first = n.substr(0, 1);
+        var thrid = n.substr(0, 3);
+        var reg = /^1[34578]\d{9}$/;
+        if (first == '0' && thrid !== '010') {
+            n = n.substr(1);
+            return n.match(reg)[0];
+        } else {
+            return n;
+        }
+
     }
     return Micc;
 }))
