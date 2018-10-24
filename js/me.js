@@ -23,8 +23,6 @@ function queryParam(name, str) {
 }
 
 
-
-
 // 匹配手機號
 function matchNumber(n) {
     var first = n.substr(0, 1);
