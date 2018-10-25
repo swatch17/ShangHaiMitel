@@ -11,6 +11,9 @@ $(document).ready(function () {
         $('#eventInfo').text('');
     })
 
+
+    phone.Endui()
+
 })
 
 // 獲取地地址欄中的參數
@@ -35,3 +38,5 @@ function matchNumber(n) {
         return n;
     }
 }
+
+
