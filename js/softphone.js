@@ -68,18 +68,13 @@
 			console.log('签入');
 
 			if ($(this).hasClass('enable')) {
-				$phone.loginExtension($phone.ext);
+				$phone.setAvailable();
 			}
 
 		});
 		$('#busy').click(function() {
-			var payload = {
-				state: 2
-			};
 			if ($(this).hasClass('enable')) {
-				$phone.setEmployeeState(function(data) {
-					console.log('示忙');
-				})
+				$phone.setBusy();
 			}
 		});
 		$('#logout').click(function() {
@@ -137,7 +132,7 @@
 				}
 			}).then(function() {
 			$phone.loginExtension($phone.ext);
-			$phone.changeUI('login')
+			$phone.setBusy();
 		});
 
 	}
@@ -366,7 +361,9 @@
 			state: 1
 		}
 		$phone.setEmployeeState(payload, function(data) {
-			console.log('setAvailable:', data)
+			console.log('setAvailable:', data);
+			$phone.changeUI('Available');
+
 		})
 	}
 	// 設置示忙
@@ -375,7 +372,8 @@
 			state: 2
 		}
 		$phone.setEmployeeState(payload, function(data) {
-			console.log('setBusy:', data)
+			console.log('setBusy:', data);
+			$phone.changeUI('login');
 		})
 	};
 	Micc.prototype.sendAjax = function(opts, callback) {
