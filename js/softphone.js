@@ -417,7 +417,7 @@
 	// 掛斷 
 	Micc.prototype.Endui = function() {
 		$phone.unableBtn('answer', 'end', 'checkIn', 'login', 'checkOut', 'logout', 'answer')
-		$phone.enableBtn('checkIn', 'busy')
+		$phone.enableBtn( 'busy')
 	}
 
 	// 簽入
