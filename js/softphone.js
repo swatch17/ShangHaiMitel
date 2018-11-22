@@ -20,10 +20,11 @@
 		this.acdState = null; //分机状态
 		this.conversationState = null; //會話狀態
 		this.sessionArr = new Array();
+		this.heldDevice = null;//轉接號碼
 
 		this.ani = null; //主叫
 		this.dnis = null; //被叫
-		this.version = '2018-11-05'
+		this.version = '2018-11-22'
 
 		$phone = this;
 
@@ -67,7 +68,7 @@
 
 		$('#checkIn').click(function () {
 			console.log('签入');
-
+			$('#phoneWrap').removeClass('hide')
 			if ($(this).hasClass('enable')) {
 				$phone.setAvailable();
 			}
@@ -248,11 +249,12 @@
 	Micc.prototype.EmployeeConversationChanged = function (conversations) {
 		var data = conversations[0];
 		$phone.conversationId = data.conversationId;
-		$phone.ani = data.fromAddress;
+		$phone.heldDevice = data.supplementalDetails.heldDevice;
 		$phone.conversationState = data.conversationState;
 		console.info('Received EmployeeConversationChange:', conversations)
 		console.log(data.conversationState);
 		console.log('AgentEvent:', data.conversationState)
+		$phone.ani= $phone.heldDevice?$phone.heldDevice:data.fromAddress;
 		// UI change Event
 		$phone.changeUI($phone.conversationState);
 	}
@@ -320,9 +322,8 @@
 		if (len == 1) {
 			$phone.ani = $phone.matchNumber($phone.ani);
 			var url = 'http://10.154.91.50:8080/incident/smartit/dialog?ANI=' + $phone.ani + '&conversationId=' + $phone.conversationId
-			// test url
-			// var testUrl = "http://10.154.91.50:8080/incident/smartit/dialog?ANI=15270897323" + '&conversationId=' + $phone.conversationId
-			window.open(url);
+			console.log('%c' +'url:'+url, 'background:#ff7680;color:#fff');
+			// window.open(url);
 			console.log('%c' + 'ANI:' + $phone.ani + ';----CallID:' + $phone.conversationId, 'background:#ff7680;color:#fff');
 		}
 
@@ -359,7 +360,7 @@
 		$phone.setEmployeeState(payload, function (data) {
 			console.log('setAvailable:', data);
 			$phone.changeUI('Available');
-
+$('#phoneWrap').addClass('hide')
 		})
 	}
 	// 設置示忙

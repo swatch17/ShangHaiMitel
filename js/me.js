@@ -12,8 +12,6 @@ $(document).ready(function () {
     })
 
 
-    phone.Endui()
-
 })
 
 // 獲取地地址欄中的參數
