@@ -254,7 +254,7 @@
 		console.info('Received EmployeeConversationChange:', conversations)
 		console.log(data.conversationState);
 		console.log('AgentEvent:', data.conversationState)
-		$phone.ani= $phone.heldDevice?$phone.heldDevice:data.fromAddress;
+		$phone.ani = $phone.heldDevice ? $phone.heldDevice : data.fromAddress;
 		// UI change Event
 		$phone.changeUI($phone.conversationState);
 	}
@@ -322,7 +322,7 @@
 		if (len == 1) {
 			$phone.ani = $phone.matchNumber($phone.ani);
 			var url = 'http://10.154.91.50:8080/incident/smartit/dialog?ANI=' + $phone.ani + '&conversationId=' + $phone.conversationId
-			console.log('%c' +'url:'+url, 'background:#ff7680;color:#fff');
+			console.log('%c' + 'url:' + url, 'background:#ff7680;color:#fff');
 			// window.open(url);
 			console.log('%c' + 'ANI:' + $phone.ani + ';----CallID:' + $phone.conversationId, 'background:#ff7680;color:#fff');
 		}
@@ -360,7 +360,7 @@
 		$phone.setEmployeeState(payload, function (data) {
 			console.log('setAvailable:', data);
 			$phone.changeUI('Available');
-$('#phoneWrap').addClass('hide')
+			$('#phoneWrap').addClass('hide')
 		})
 	}
 	// 設置示忙
