@@ -509,13 +509,13 @@
 	}
 	// 去手機號規則，外地手機號呼入手機號需要去掉零
 	Micc.prototype.matchNumber = function (n) {
-		var first = n.substr(0, 1);
-		var thrid = n.substr(0, 3);
-		var reg = /^1[34578]\d{9}$/;
-		if (first == '0' && thrid !== '010') {
-			n = n.substr(1);
-			return n.match(reg)[0];
+		var o = n.substr(1);
+		var reg = /^1[345678]\d{9}$/;
+		if (reg.test(o)) {
+			console.log(o);
+			return o;
 		} else {
+			console.log(n);
 			return n;
 		}
 	}
