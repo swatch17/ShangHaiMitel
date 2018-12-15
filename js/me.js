@@ -10,6 +10,26 @@ $(document).ready(function () {
     $('#clear').click(function () {
         $('#eventInfo').text('');
     })
+    $('#historyList').click(function () {
+        phone.history();
+        var agentId = $phone.session('agentId'), ext = $phone.session('ext'), pwd = $phone.session('pwd');
+        console.log(agentId, ext, pwd, token)
+    })
+
+    if ($phone.session('flag')) {
+        var agentId = $phone.session('agentId'), ext = $phone.session('ext'), pwd = $phone.session('pwd');
+
+       $phone.agentId = agentId,$phone.ext=ext,$phone.pwd=pwd;
+        if (agentId && ext && pwd) {
+            $('#agentId').val(agentId);
+            $('#ext').val(ext);
+            $('#pwd').val(pwd);
+            $phone.login(agentId, pwd, function(data) {
+                    console.log('登錄成功！');
+                    $phone.connectToEmployeeHub(data);
+                });
+        }
+    }
 
 
 })
@@ -36,5 +56,4 @@ function matchNumber(n) {
         return n;
     }
 }
-
 
